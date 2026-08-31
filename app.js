@@ -4,7 +4,7 @@ const databasePetugas = {
     masinis: [
         { nama: "BUKHORI", id: "63547" }, { nama: "HAFID", id: "47291" },
         { nama: "ARDI", id: "49417" }, { nama: "HARIK", id: "56547" },
-        { nama: "ANDRIAWAN", id: "60629" }, { nama: "NAUFAL", id: "70902" }
+        { nama: "ANDRIAWAN", id: "60629" }, { nama: "NAUFAL", id: "70902" }, { nama: "IKHWANUL", id: "60674" }
     ],
     asmas: [
         { nama: "MAULANA", id: "61509" }, { nama: "LARASANDI", id: "61718" },
