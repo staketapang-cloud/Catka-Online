@@ -61,32 +61,46 @@ function renderDropdowns() {
 }
 
 // ==================== LOGIKA AUTO REVERSE STAMFORMASI ====================
-function handleAutoStamformasi() {
-    const inputNoKa = document.getElementById("noKa").value.trim();
+// ==================== LOGIKA AUTO REVERSE STAMFORMASI (REAL-TIME INPUT) ====================
+function handleAutoStamformasi(e) {
+    const inputNoKa = e.target.value.trim();
     if (!inputNoKa) return;
 
     const currentTanggal = document.getElementById("filterDate").value;
 
-    // Cari KA di hari yang sama (Nomor sama ATAU nomor pasangan selisih 1 angka)
+    // Cari data KA di hari yang sama (Nomor KA sama ATAU selisih satu angka / pasangannya)
     const kadiHariSama = catkaStorage.find(item => {
         const matchHari = item.tanggal === currentTanggal;
-        const nomorSama = parseInt(item.noKa) === parseInt(inputNoKa);
-        const nomorPasangan = (parseInt(item.noKa) === parseInt(inputNoKa) + 1) || (parseInt(item.noKa) === parseInt(inputNoKa) - 1);
+        
+        // Amankan konversi nomor KA ke Integer untuk perbandingan matematika
+        const nomorA = parseInt(item.noKa || item.noka || 0);
+        const nomorB = parseInt(inputNoKa);
+        
+        const nomorSama = nomorA === nomorB;
+        const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
+        
         return matchHari && (nomorSama || nomorPasangan);
     });
     
+    // Jika ditemukan data pembanding di hari yang sama, langsung suntikkan ke Form Input
     if (kadiHariSama) {
-        document.getElementById("namaKa").value = kadiHariSama.namaKa || "";
+        // 1. Otomatis isi Nama Kereta Api
+        document.getElementById("namaKa").value = kadiHariSama.namaKa || kadiHariSama.namaka || "";
         
-        if (kadiHariSama.stamformasi) {
-            const susunanAsli = kadiHariSama.stamformasi.split("\n");
-            // Menggunakan operator [...spread] agar array dasar di penyimpanan tidak ikut terbalik permanen
+        // 2. Ambil data stamformasi asli
+        const stamAsli = kadiHariSama.stamformasi || kadiHariSama.stam_datang || kadiHariSama.stam_berangkat || "";
+        
+        if (stamAsli) {
+            // 3. Pecah baris, balik urutan rangkaian menggunakan [...spread] agar data asli aman, lalu gabungkan kembali
+            const susunanAsli = stamAsli.split("\n");
             const susunanTerbalik = [...susunanAsli].reverse().join("\n");
             
+            // 4. Langsung masukkan susunan terbalik ke dalam Kotak Textarea Form Input
             document.getElementById("stamformasi").value = susunanTerbalik;
             
-            // Set arah perjalanan otomatis berlawanan dari data log sebelumnya
-            document.getElementById("arahKa").value = kadiHariSama.arah === "KEDATANGAN" ? "KEBERANGKATAN" : "KEDATANGAN";
+            // 5. Otomatis balikkan arah perjalanan di dropdown form input (KEDATANGAN <-> KEBERANGKATAN)
+            const arahAsli = kadiHariSama.arah || "";
+            document.getElementById("arahKa").value = arahAsli === "KEDATANGAN" ? "KEBERANGKATAN" : "KEDATANGAN";
         }
     }
 }
