@@ -188,7 +188,6 @@ function renderTable() {
         const itemDate = new Date(item.tanggal);
         const matchWaktuDefault = itemDate.getMonth() === targetMonth && itemDate.getFullYear() === targetYear;
         
-        // Proteksi parsing string untuk menghindari error undefined data
         const sTanggal = (item.tanggal || "").toString();
         const sNoKa = (item.noKa || "").toString().toLowerCase();
         const sNamaKa = (item.namaKa || "").toString().toLowerCase();
@@ -226,23 +225,30 @@ function renderTable() {
 
     if (filteredData.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b; padding: 2rem;">❌ Tidak ada data CATKA yang cocok.</td></tr>`;
-    return;}
-    // Urutkan record data dari tanggal terkini
+        return;
+    }
+
     filteredData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
-    // Render baris data ke tabel DOM HTML secara dinamis (Lengkap dengan tombol aksi hapus)
+
+    // FIX KUNCI: Struktur pembagian kolom <td> yang presisi agar tidak menumpuk di kiri
     filteredData.forEach(item => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            ${item.tanggal}
-            ${item.noKa}
-            ${item.namaKa}
-            ${item.arah}Msn: 
-            ${item.masinis}Asm: 
-            ${item.asmas}
-            Kdr: ${item.kdr} | Tka: ${item.tka}
-            🚂 ${item.lokomotif}
-            <div class="stam-list">${item.stamformasi}
-            `;
+            <td><strong>${item.tanggal}</strong></td>
+            <td><span class="badge" style="background:#1e3a8a">${item.noKa}</span></td>
+            <td>${item.namaKa}</td>
+            <td><small><em>${item.arah}</em></small></td>
+            <td>
+                Msn: <strong>${item.masinis}</strong><br>
+                Asm: ${item.asmas}<br>
+                Kdr: ${item.kdr} | Tka: ${item.tka}
+            </td>
+            <td>🚂 ${item.lokomotif}</td>
+            <td><div class="stam-list">${item.stamformasi}</div></td>
+            <td>
+                <button class="btn-delete" onclick="deleteCatka(${item.id || 0}, '${item.noKa}')">🗑️ Hapus</button>
+            </td>
+        `;
         tableBody.appendChild(row);
     });
 }
