@@ -26,7 +26,7 @@ const databasePetugas = {
         { nama: "DADANG", id: "64331" }, { nama: "ARTONO", id: "56518" },
         { nama: "KHALIF", id: "76136" }, { nama: "ABIDIN", id: "53579" }
     ],
-    lokomotif: ["CC2019211", "CC2019202", "CC2018316", "CC2039808", "CC2017804", "CC2061317", "CC2061379"]
+    lokomotif: ["CC2019211", "CC2019202", "CC2018316", "CC2039808", "CC2017804", "CC2061317", "CC2061379", "CC2061325"]
 };
 
 // Data Awal Penyimpanan (Mock Data Berdasarkan Spreadsheet CATKA Anda)
