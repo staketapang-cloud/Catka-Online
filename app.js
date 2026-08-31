@@ -29,14 +29,14 @@ let catkaStorage = [
     {
         tanggal: "2026-08-01",
         noKa: "7045",
-        namaKa: "LOGAWA",
+        namaKa: "SANGKURIANG",
         arah: "KEDATANGAN",
         masinis: "IKHWANUL 60674",
         asmas: "ABRAHAM 61195",
         kdr: "ALFAN 75383",
         tka: "ABIDIN 53579",
         lokomotif: "CC2061325",
-        stamformasi: "K3 01803 F\nK3 01861 F\nK3 01839 F\nM1 01906 F\nK1 018153 F\nK1 01898 F"
+        stamformasi: "K3 01803 F\nK3 01861 F\nK3 01839 F\nM1 01906 F\nK1 018153 F\nK1 01898 F\nK1 01905 F\nK1 01849 F\nT1 00902 F\nP 06802 F"
     }
 ];
 
