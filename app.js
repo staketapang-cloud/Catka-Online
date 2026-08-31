@@ -156,24 +156,26 @@ function changeMonth(direction) {
 function renderTable() {
     const tableBody = document.getElementById("catkaTableBody");
     const filterDateValue = document.getElementById("filterDate").value;
-    const searchQuery = document.getElementById("globalSearch").value.toLowerCase();
+    const searchQuery = document.getElementById("globalSearch").value.toLowerCase().trim();
     
     // Set Label Bulan Aktif di Header Tabel
     const opsiBulan = { month: 'long', year: 'numeric' };
-    document.getElementById("currentViewLabel").textContent = new Date(filterDateValue).toLocaleDateString('id-ID', opsiBulan);
-
+    
     tableBody.innerHTML = "";
 
-    // Lakukan filter berdasarkan Bulan/Tahun terpilih dan kueri pencarian global
+    // 1. Tentukan target filter bulan dan tahun berdasarkan input tanggal
     const targetMonth = new Date(filterDateValue).getMonth();
     const targetYear = new Date(filterDateValue).getFullYear();
 
+    // 2. Jalankan Logika Filter Pintar
     const filteredData = catkaStorage.filter(item => {
+        // Ambil data tanggal item untuk pengecekan
         const itemDate = new Date(item.tanggal);
-        const matchWaktu = itemDate.getMonth() === targetMonth && itemDate.getFullYear() === targetYear;
+        const matchWaktuDefault = itemDate.getMonth() === targetMonth && itemDate.getFullYear() === targetYear;
         
+        // Cek apakah query pencarian cocok dengan field data apa pun (termasuk teks Tanggal)
         const matchSearch = 
-            item.tanggal.includes(searchQuery) ||
+            item.tanggal.includes(searchQuery) || // Mengaktifkan pencarian format YYYY-MM-DD
             item.noKa.toLowerCase().includes(searchQuery) ||
             item.namaKa.toLowerCase().includes(searchQuery) ||
             item.masinis.toLowerCase().includes(searchQuery) ||
@@ -182,15 +184,36 @@ function renderTable() {
             item.tka.toLowerCase().includes(searchQuery) ||
             item.lokomotif.toLowerCase().includes(searchQuery);
 
-        return matchWaktu && matchSearch;
+        // LOGIKA KUNCI: 
+        // Jika kolom pencarian diisi, abaikan batasan bulan aktif (cari di SEMUA data riwayat).
+        // Jika kolom pencarian kosong, kunci tampilan hanya pada bulan yang sedang dipilih saja.
+        if (searchQuery !== "") {
+            return matchSearch;
+        } else {
+            return matchWaktuDefault;
+        }
     });
 
+    // 3. Perbarui teks label status di atas tabel secara dinamis
+    const currentLabelElement = document.getElementById("currentViewLabel");
+    if (searchQuery !== "") {
+        currentLabelElement.textContent = `🔍 Hasil Pencarian global: "${searchQuery}"`;
+        currentLabelElement.style.background = "#ef4444"; // Ubah warna badge jadi merah saat mode cari global
+    } else {
+        currentLabelElement.textContent = new Date(filterDateValue).toLocaleDateString('id-ID', opsiBulan);
+        currentLabelElement.style.background = "var(--secondary-color)"; // Kembalikan ke warna asli (oranye)
+    }
+
+    // 4. Tampilkan Notifikasi jika data tidak ditemukan
     if (filteredData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b;">Tidak ada data CATKA yang cocok atau tersedia pada bulan ini.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b; padding: 2rem;">Tidak ada data CATKA yang cocok dengan pencarian Anda.</td></tr>`;
         return;
     }
 
-    // Suntikkan Baris Data ke DOM Tabel
+    // 5. Urutkan hasil dari tanggal paling baru ke paling lama (Kredibilitas Log)
+    filteredData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+    // 6. Suntikkan Baris Data ke DOM Tabel
     filteredData.forEach(item => {
         const row = document.createElement("tr");
         row.innerHTML = `
