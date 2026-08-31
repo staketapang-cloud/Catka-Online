@@ -1,32 +1,11 @@
 // ==================== DATABASE INTERNAL & PETUGAS ====================
-// Berfungsi sebagai fallback lokal dari spreadsheet data sarana & petugas Anda
-const databasePetugas = {
-    masinis: [
-        { nama: "BUKHORI", id: "63547" }, { nama: "HAFID", id: "47291" },
-        { nama: "ARDI", id: "49417" }, { nama: "HARIK", id: "56547" },
-        { nama: "ANDRIAWAN", id: "60629" }, { nama: "NAUFAL", id: "70902" },
-        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" },
-        { nama: "SUGIHERI", id: "56533" }
-    ],
-    asmas: [
-        { nama: "MAULANA", id: "61509" }, { nama: "LARASANDI", id: "61718" },
-        { nama: "SAHIFUL", id: "56589" }, { nama: "HARIYADI", id: "44139" },
-        { nama: "MANAN", id: "63548" }, { nama: "SUHARTO", id: "61107" },
-        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" },
-        { nama: "SUGIHERI", id: "56533" }
-    ],
-    kdr: [
-        { nama: "HARI", id: "61505" }, { nama: "MAULANA", id: "61509" },
-        { nama: "FEBRIYAN", id: "75407" }, { nama: "TAUFIQ", id: "70418" },
-        { nama: "ARIF", id: "77317" }, { nama: "ULHAQ", id: "75408" },
-        { nama: "ALFAN", id: "75383" }
-    ],
-    tka: [
-        { nama: "IBAD", id: "56631" }, { nama: "TITUS", id: "56642" },
-        { nama: "DADANG", id: "64331" }, { nama: "ARTONO", id: "56518" },
-        { nama: "KHALIF", id: "76136" }, { nama: "ABIDIN", id: "53579" }
-    ],
-    lokomotif: ["CC2019211", "CC2019202", "CC2018316", "CC2039808", "CC2017804", "CC2061317", "CC2061379", "CC2061325"]
+// ==================== INITIAL DATABASE FALLBACK ====================
+const defaultPetugas = {
+    masinis: ["BUKHORI 63547", "HAFID 47291", "ARDI 49417", "HARIK 56547", "ANDRIAWAN 60629", "NAUFAL 70902"],
+    asmas: ["MAULANA 61509", "LARASANDI 61718", "SAHIFUL 56589", "HARIYADI 44139", "MANAN 63548", "SUHARTO 61107"],
+    kdr: ["HARI 61505", "MAULANA 61509", "FEBRIYAN 75407", "TAUFIQ 70418", "ARIF 77317", "ULHAQ 75408"],
+    tka: ["IBAD 56631", "TITUS 56642", "DADANG 64331", "ARTONO 56518", "KHALIF 76136"],
+    lokomotif: ["CC2019211", "CC2019202", "CC2018316", "CC2039808", "CC2017804", "CC2061317"]
 };
 
 // Data Awal Penyimpanan (Mock Data Berdasarkan Spreadsheet CATKA Anda)
@@ -45,43 +24,38 @@ let catkaStorage = [
     }
 ];
 
-// ==================== INSTALASI AWAL / INIT ====================
+// SOLUSI KUNCI: Ambil data dari LocalStorage, jika kosong baru pakai defaultData
+let databasePetugas = JSON.parse(localStorage.getItem("catka_petugas")) || defaultPetugas;
+let catkaStorage = JSON.parse(localStorage.getItem("catka_data")) || defaultData;
+
+// ==================== INISIALISASI SISTEM ====================
 document.addEventListener("DOMContentLoaded", () => {
-    populateDropdowns();
+    // Set default penanggalan ke hari ini
+    const hariIni = new Date().toISOString().split('T')[0];
+    document.getElementById("filterDate").value = hariIni;
+
+    renderDropdowns();
     renderTable();
 
-    // Event Listener Deteksi Pengisian Nomor KA Otomatis (Arah Balik Rangkaian)
     document.getElementById("noKa").addEventListener("input", handleAutoStamformasi);
-    
-    // Event Listener Tambah Data Form
     document.getElementById("catkaForm").addEventListener("submit", handleSubmitCatka);
-    
-    // Event Listener Fitur Live Search
     document.getElementById("globalSearch").addEventListener("input", renderTable);
-    
-    // Event Listener Filter Tanggal
     document.getElementById("filterDate").addEventListener("change", renderTable);
 });
 
-// Mengisi Pilihan Dropdown Form dari Database Petugas
-function populateDropdowns() {
-    const fields = ['masinis', 'asmas', 'kdr', 'tka'];
+// Render/Update List Rekomendasi Dropdown ke elemen Datalist HTML5 [1]
+function renderDropdowns() {
+    const fields = ['masinis', 'asmas', 'kdr', 'tka', 'lokomotif'];
     fields.forEach(field => {
-        const select = document.getElementById(field);
-        databasePetugas[field].forEach(item => {
+        const datalist = document.getElementById(`list_${field}`);
+        datalist.innerHTML = ""; // Bersihkan list lama
+        
+        // Urutkan alfabetis agar mempermudah pencarian visual pengguna
+        databasePetugas[field].sort().forEach(item => {
             let option = document.createElement("option");
-            option.value = `${item.nama} ${item.id}`;
-            option.textContent = `${item.nama} (${item.id})`;
-            select.appendChild(option);
+            option.value = item;
+            datalist.appendChild(option);
         });
-    });
-
-    const selectLok = document.getElementById("lokomotif");
-    databasePetugas.lokomotif.forEach(lok => {
-        let option = document.createElement("option");
-        option.value = lok;
-        option.textContent = lok;
-        selectLok.appendChild(option);
     });
 }
 
@@ -91,59 +65,88 @@ function handleAutoStamformasi(e) {
     if (!inputNoKa) return;
 
     const currentTanggal = document.getElementById("filterDate").value;
-
-    // Cari KA pembanding di hari yang sama
     const kadiHariSama = catkaStorage.find(item => item.tanggal === currentTanggal);
     
     if (kadiHariSama) {
-        // Logika logika otomatis balik susunan (contoh: 7045 ke 7046)
-        if (
-            (parseInt(inputNoKa) === parseInt(kadiHariSama.noKa) + 1) || 
-            (parseInt(inputNoKa) === parseInt(kadiHariSama.noKa) - 1)
-        ) {
-            // Ambil susunan stamformasi sebelumnya, pecah per baris, balik urutan, lalu gabung kembali
+        if ((parseInt(inputNoKa) === parseInt(kadiHariSama.noKa) + 1) || 
+            (parseInt(inputNoKa) === parseInt(kadiHariSama.noKa) - 1)) {
+            
             const susunanAsli = kadiHariSama.stamformasi.split("\n");
             const susunanTerbalik = susunanAsli.reverse().join("\n");
             
             document.getElementById("stamformasi").value = susunanTerbalik;
             document.getElementById("namaKa").value = kadiHariSama.namaKa;
-            
-            // Ubah arah default agar berlawanan dengan KA pasangannya
             document.getElementById("arahKa").value = kadiHariSama.arah === "KEDATANGAN" ? "KEBERANGKATAN" : "KEDATANGAN";
         }
     }
 }
 
-// ==================== SIMPAN DATA ====================
+// ==================== SIMPAN & UPDATE DATABASE PETUGAS ====================
 function handleSubmitCatka(e) {
     e.preventDefault();
 
+    // Mengambil nilai input teks murni dari form
+    const valMasinis = document.getElementById("masinis").value.trim().toUpperCase();
+    const valAsmas = document.getElementById("asmas").value.trim().toUpperCase();
+    const valKdr = document.getElementById("kdr").value.trim().toUpperCase();
+    const valTka = document.getElementById("tka").value.trim().toUpperCase();
+    const valLok = document.getElementById("lokomotif").value.trim().toUpperCase();
+
     const newData = {
+        id: Date.now(), // ID Unik Berbasis Milidetik Waktu
         tanggal: document.getElementById("filterDate").value,
         noKa: document.getElementById("noKa").value,
         namaKa: document.getElementById("namaKa").value || "Reguler",
         arah: document.getElementById("arahKa").value,
-        masinis: document.getElementById("masinis").value,
-        asmas: document.getElementById("asmas").value,
-        kdr: document.getElementById("kdr").value,
-        tka: document.getElementById("tka").value,
-        lokomotif: document.getElementById("lokomotif").value,
+        masinis: valMasinis,
+        asmas: valAsmas,
+        kdr: valKdr,
+        tka: valTka,
+        lokomotif: valLok,
         stamformasi: document.getElementById("stamformasi").value
     };
 
+    // LOGIKA PENYUNTIKAN OTOMATIS KE DATABASE PETUGAS JIKA DATA BELUM ADA
+    let databaseBerubah = false;
+    const checkAndUpdateDB = (kategori, nilai) => {
+        if (nilai && !databasePetugas[kategori].includes(nilai)) {
+            databasePetugas[kategori].push(nilai);
+            databaseBerubah = true;
+        }
+    };
+
+    checkAndUpdateDB('masinis', valMasinis);
+    checkAndUpdateDB('asmas', valAsmas);
+    checkAndUpdateDB('kdr', valKdr);
+    checkAndUpdateDB('tka', valTka);
+    checkAndUpdateDB('lokomotif', valLok);
+
+    // Jika ada kru/lokomotif baru, simpan ke memori database petugas lokal
+    if (databaseBerubah) {
+        localStorage.setItem("catka_petugas", JSON.stringify(databasePetugas));
+        renderDropdowns(); // Gambar ulang elemen rekomendasi datalist [1]
+    }
+
+    // Simpan data log CATKA utama
     catkaStorage.push(newData);
+    localStorage.setItem("catka_data", JSON.stringify(catkaStorage));
+
     renderTable();
+    
+    // Reset form isian dengan mengunci tanggal agar tidak perlu input ulang
+    const tglSebelumnya = document.getElementById("filterDate").value;
     document.getElementById("catkaForm").reset();
-    alert(`Data CATKA KA ${newData.noKa} berhasil ditambahkan!`);
+    document.getElementById("filterDate").value = tglSebelumnya;
+
+    alert(`Data CATKA KA ${newData.noKa} berhasil disimpan! Kru baru (jika ada) otomatis masuk ke daftar database.`);
 }
 
-// ==================== BULAN & TANGGAL CONTROL ====================
+// ==================== NAVIGASI KALENDER BULAN ====================
 function changeMonth(direction) {
     const dateInput = document.getElementById("filterDate");
     let current = new Date(dateInput.value);
     current.setMonth(current.getMonth() + direction);
     
-    // Format YYYY-MM-DD kembali ke input date
     const yyyy = current.getFullYear();
     const mm = String(current.getMonth() + 1).padStart(2, '0');
     const dd = String(current.getDate()).padStart(2, '0');
@@ -152,30 +155,36 @@ function changeMonth(direction) {
     renderTable();
 }
 
+// ==================== FITUR HAPUS DATA ====================
+function deleteCatka(idCatka, noKa) {
+    if (confirm(`Apakah Anda yakin ingin menghapus permanen data CATKA Kereta Api ${noKa}?`)) {
+        // Filter array untuk membuang ID yang dipilih
+        catkaStorage = catkaStorage.filter(item => item.id !== idCatka);
+        // Perbarui LocalStorage utama
+        localStorage.setItem("catka_data", JSON.stringify(catkaStorage));
+        // Gambar Ulang Tabel
+        renderTable();
+    }
+}
+
 // ==================== AMBIL & FILTER DATA KE TABEL ====================
 function renderTable() {
     const tableBody = document.getElementById("catkaTableBody");
     const filterDateValue = document.getElementById("filterDate").value;
     const searchQuery = document.getElementById("globalSearch").value.toLowerCase().trim();
-    
-    // Set Label Bulan Aktif di Header Tabel
     const opsiBulan = { month: 'long', year: 'numeric' };
     
     tableBody.innerHTML = "";
 
-    // 1. Tentukan target filter bulan dan tahun berdasarkan input tanggal
     const targetMonth = new Date(filterDateValue).getMonth();
     const targetYear = new Date(filterDateValue).getFullYear();
 
-    // 2. Jalankan Logika Filter Pintar
     const filteredData = catkaStorage.filter(item => {
-        // Ambil data tanggal item untuk pengecekan
         const itemDate = new Date(item.tanggal);
         const matchWaktuDefault = itemDate.getMonth() === targetMonth && itemDate.getFullYear() === targetYear;
         
-        // Cek apakah query pencarian cocok dengan field data apa pun (termasuk teks Tanggal)
         const matchSearch = 
-            item.tanggal.includes(searchQuery) || // Mengaktifkan pencarian format YYYY-MM-DD
+            item.tanggal.includes(searchQuery) || 
             item.noKa.toLowerCase().includes(searchQuery) ||
             item.namaKa.toLowerCase().includes(searchQuery) ||
             item.masinis.toLowerCase().includes(searchQuery) ||
@@ -184,9 +193,6 @@ function renderTable() {
             item.tka.toLowerCase().includes(searchQuery) ||
             item.lokomotif.toLowerCase().includes(searchQuery);
 
-        // LOGIKA KUNCI: 
-        // Jika kolom pencarian diisi, abaikan batasan bulan aktif (cari di SEMUA data riwayat).
-        // Jika kolom pencarian kosong, kunci tampilan hanya pada bulan yang sedang dipilih saja.
         if (searchQuery !== "") {
             return matchSearch;
         } else {
@@ -194,26 +200,23 @@ function renderTable() {
         }
     });
 
-    // 3. Perbarui teks label status di atas tabel secara dinamis
     const currentLabelElement = document.getElementById("currentViewLabel");
     if (searchQuery !== "") {
-        currentLabelElement.textContent = `🔍 Hasil Pencarian global: "${searchQuery}"`;
-        currentLabelElement.style.background = "#ef4444"; // Ubah warna badge jadi merah saat mode cari global
+        currentLabelElement.textContent = `🔍 Hasil Pencarian: "${searchQuery}"`;
+        currentLabelElement.style.background = "#ef4444";
     } else {
         currentLabelElement.textContent = new Date(filterDateValue).toLocaleDateString('id-ID', opsiBulan);
-        currentLabelElement.style.background = "var(--secondary-color)"; // Kembalikan ke warna asli (oranye)
+        currentLabelElement.style.background = "var(--secondary-color)";
     }
 
-    // 4. Tampilkan Notifikasi jika data tidak ditemukan
     if (filteredData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#64748b; padding: 2rem;">Tidak ada data CATKA yang cocok dengan pencarian Anda.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b; padding: 2rem;">❌ Tidak ada data CATKA yang cocok.</td></tr>`;
         return;
     }
 
-    // 5. Urutkan hasil dari tanggal paling baru ke paling lama (Kredibilitas Log)
+    // Urutkan record data dari tanggal terkini
     filteredData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
 
-    // 6. Suntikkan Baris Data ke DOM Tabel
     filteredData.forEach(item => {
         const row = document.createElement("tr");
         row.innerHTML = `
