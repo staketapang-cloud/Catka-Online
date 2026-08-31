@@ -173,6 +173,7 @@ function renderTable() {
         const matchWaktu = itemDate.getMonth() === targetMonth && itemDate.getFullYear() === targetYear;
         
         const matchSearch = 
+            item.tanggal.includes(searchQuery) ||
             item.noKa.toLowerCase().includes(searchQuery) ||
             item.namaKa.toLowerCase().includes(searchQuery) ||
             item.masinis.toLowerCase().includes(searchQuery) ||
