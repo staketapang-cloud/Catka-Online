@@ -60,7 +60,6 @@ function renderDropdowns() {
     });
 }
 
-// ==================== LOGIKA AUTO REVERSE STAMFORMASI ====================
 // ==================== LOGIKA AUTO REVERSE STAMFORMASI (REAL-TIME INPUT) ====================
 function handleAutoStamformasi(e) {
     const inputNoKa = e.target.value.trim();
@@ -257,7 +256,7 @@ function renderTable() {
                 Asm: ${item.asmas}<br>
                 Kdr: ${item.kdr} | Tka: ${item.tka}
             </td>
-            <td>🚂 ${item.lokomotif}</td>
+            <td>${item.lokomotif}</td>
             <td><div class="stam-list">${item.stamformasi}</div></td>
             <td>
                 <button class="btn-delete" onclick="deleteCatka(${item.id || 0}, '${item.noKa}')">🗑️ Hapus</button>
