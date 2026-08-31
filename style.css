@@ -5,6 +5,7 @@
     --light-color: #f8fafc;
     --border-color: #cbd5e1;
     --success-color: #10b981;
+    --danger-color: #ef4444;
 }
 
 * {
@@ -156,6 +157,23 @@ label {
     filter: brightness(0.9);
 }
 
+/* Tombol Hapus */
+.btn-delete {
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-delete:hover {
+    opacity: 0.85;
+}
+
 .hint {
     color: #64748b;
     font-style: italic;
@@ -190,6 +208,7 @@ table {
 th, td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
+    vertical-align: top;
 }
 
 th {
