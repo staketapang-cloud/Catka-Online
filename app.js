@@ -26,7 +26,7 @@ let catkaStorage = [
 
 // SOLUSI KUNCI: Ambil data dari LocalStorage, jika kosong baru pakai defaultData
 let databasePetugas = JSON.parse(localStorage.getItem("catka_petugas")) || defaultPetugas;
-let catkaStorage = JSON.parse(localStorage.getItem("catka_data")) || defaultData;
+let catkaStorage = JSON.parse(localStorage.getItem("catka_data")) || catkaStorage;
 
 // ==================== INISIALISASI SISTEM ====================
 document.addEventListener("DOMContentLoaded", () => {
@@ -93,7 +93,6 @@ function handleSubmitCatka(e) {
     const valLok = document.getElementById("lokomotif").value.trim().toUpperCase();
 
     const newData = {
-        id: Date.now(), // ID Unik Berbasis Milidetik Waktu
         tanggal: document.getElementById("filterDate").value,
         noKa: document.getElementById("noKa").value,
         namaKa: document.getElementById("namaKa").value || "Reguler",
