@@ -25,7 +25,7 @@
         <section class="control-panel">
             <div class="date-picker-group">
                 <label for="filterDate">🗓️ Pilih Tanggal CATKA:</label>
-                <input type="date" id="filterDate" value="2026-08-01">
+                <input type="date" id="filterDate">
             </div>
             <div class="history-buttons">
                 <button onclick="changeMonth(-1)">⬅️ Bulan Sebelumnya</button>
@@ -46,26 +46,34 @@
                         <label>Nama KA</label>
                         <input type="text" id="namaKa" placeholder="Nama Kereta">
                     </div>
+                    
+                    <!-- Fitur Dropdown + Input Manual Lewat Datalist -->
                     <div class="form-group">
                         <label>Masinis</label>
-                        <select id="masinis"></select>
+                        <input type="text" id="masinis" list="list_masinis" placeholder="Ketik baru / pilih..." required>
+                        <datalist id="list_masinis"></datalist>
                     </div>
                     <div class="form-group">
                         <label>Asmas (Asisten Masinis)</label>
-                        <select id="asmas"></select>
+                        <input type="text" id="asmas" list="list_asmas" placeholder="Ketik baru / pilih..." required>
+                        <datalist id="list_asmas"></datalist>
                     </div>
                     <div class="form-group">
                         <label>Kdr (Kondektur)</label>
-                        <select id="kdr"></select>
+                        <input type="text" id="kdr" list="list_kdr" placeholder="Ketik baru / pilih..." required>
+                        <datalist id="list_kdr"></datalist>
                     </div>
                     <div class="form-group">
                         <label>TKA (Teknisi KA)</label>
-                        <select id="tka"></select>
+                        <input type="text" id="tka" list="list_tka" placeholder="Ketik baru / pilih..." required>
+                        <datalist id="list_tka"></datalist>
                     </div>
                     <div class="form-group">
                         <label>Lokomotif</label>
-                        <select id="lokomotif"></select>
+                        <input type="text" id="lokomotif" list="list_lokomotif" placeholder="Ketik baru / pilih..." required>
+                        <datalist id="list_lokomotif"></datalist>
                     </div>
+                    
                     <div class="form-group">
                         <label>Arah Perjalanan</label>
                         <select id="arahKa">
@@ -103,6 +111,7 @@
                             <th>Awak KA (Masinis / Asmas / Kdr / Tka)</th>
                             <th>Sarana (Lokomotif)</th>
                             <th>Stamformasi Rangkaian</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody id="catkaTableBody">
@@ -113,7 +122,6 @@
         </section>
 
     </main>
-
     <script src="app.js"></script>
 </body>
 </html>
