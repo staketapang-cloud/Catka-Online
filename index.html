@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi CATKA Online</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header & Pencarian -->
+    <header>
+        <div class="header-container">
+            <h1>🚂 CATKA ONLINE SYSTEM</h1>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="Cari KA, Masinis, Asmas, Kdr, Tka, Lokomotif...">
+                <span class="search-icon">🔎</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Panel Kontrol Waktu & Fitur Riwayat -->
+        <section class="control-panel">
+            <div class="date-picker-group">
+                <label for="filterDate">🗓️ Pilih Tanggal CATKA:</label>
+                <input type="date" id="filterDate" value="2026-08-01">
+            </div>
+            <div class="history-buttons">
+                <button onclick="changeMonth(-1)">⬅️ Bulan Sebelumnya</button>
+                <button onclick="changeMonth(1)">Bulan Berikutnya ➡️</button>
+            </div>
+        </section>
+
+        <!-- Form Tambah Data CATKA -->
+        <section class="form-section">
+            <h3>📝 Input Perjalanan Kereta Api Baru</h3>
+            <form id="catkaForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nomor KA</label>
+                        <input type="text" id="noKa" required placeholder="Contoh: 7045 / 7046">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama KA</label>
+                        <input type="text" id="namaKa" placeholder="Nama Kereta">
+                    </div>
+                    <div class="form-group">
+                        <label>Masinis</label>
+                        <select id="masinis"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Asmas (Asisten Masinis)</label>
+                        <select id="asmas"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kdr (Kondektur)</label>
+                        <select id="kdr"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>TKA (Teknisi KA)</label>
+                        <select id="tka"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Lokomotif</label>
+                        <select id="lokomotif"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Arah Perjalanan</label>
+                        <select id="arahKa">
+                            <option value="KEBERANGKATAN">STASIUN AWAL KEBERANGKATAN</option>
+                            <option value="KEDATANGAN">STASIUN KEDATANGAN</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Stamformasi Kereta (Pemisah baris baru per kereta)</label>
+                    <textarea id="stamformasi" rows="5" placeholder="Contoh:&#10;K3 01803 F/45&#10;K3 01861 F/45&#10;M1 01906 F/43"></textarea>
+                    <small class="hint">💡 Jika nomor KA pasangan dimasukkan (contoh 7046 setelah 7045), stamformasi otomatis terisi secara terbalik.</small>
+                </div>
+
+                <button type="submit" class="btn-submit">✅ Simpan Data CATKA</button>
+            </form>
+        </section>
+
+        <!-- Tabel Tampilan Data CATKA -->
+        <section class="table-section">
+            <div class="table-header-flex">
+                <h3>📊 Lembar Log Catatan Kereta Api (CATKA)</h3>
+                <span id="currentViewLabel" class="badge">Agustus 2026</span>
+            </div>
+            
+            <div class="responsive-table">
+                <table id="catkaTable">
+                    <thead>
+                        <tr>
+                            <th>Tanggal</th>
+                            <th>No KA</th>
+                            <th>Nama KA</th>
+                            <th>Arah</th>
+                            <th>Awak KA (Masinis / Asmas / Kdr / Tka)</th>
+                            <th>Sarana (Lokomotif)</th>
+                            <th>Stamformasi Rangkaian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catkaTableBody">
+                        <!-- Data diisi via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
