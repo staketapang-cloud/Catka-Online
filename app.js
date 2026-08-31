@@ -5,13 +5,15 @@ const databasePetugas = {
         { nama: "BUKHORI", id: "63547" }, { nama: "HAFID", id: "47291" },
         { nama: "ARDI", id: "49417" }, { nama: "HARIK", id: "56547" },
         { nama: "ANDRIAWAN", id: "60629" }, { nama: "NAUFAL", id: "70902" },
-        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" }
+        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" },
+        { nama: "SUGIHERI", id: "56533" }
     ],
     asmas: [
         { nama: "MAULANA", id: "61509" }, { nama: "LARASANDI", id: "61718" },
         { nama: "SAHIFUL", id: "56589" }, { nama: "HARIYADI", id: "44139" },
         { nama: "MANAN", id: "63548" }, { nama: "SUHARTO", id: "61107" },
-        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" }
+        { nama: "IKHWANUL", id: "60674" }, { nama: "ABRAHAM", id: "61195" },
+        { nama: "SUGIHERI", id: "56533" }
     ],
     kdr: [
         { nama: "HARI", id: "61505" }, { nama: "MAULANA", id: "61509" },
