@@ -159,7 +159,7 @@ function handleSubmitCatka(e) {
     document.getElementById("catkaForm").reset();
     document.getElementById("filterDate").value = tglSebelumnya;
 
-    alert(`Data CATKA KA ${newData.noKa} berhasil disimpan permanen ke dalam browser!`);
+    alert(`Data CATKA ${newData.noKa} berhasil disimpan`);
 }
 
 // ==================== NAVIGASI KALENDER BULAN ====================
