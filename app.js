@@ -87,7 +87,7 @@ let kadiHariSama = catkaStorage.find(item => {
   const nomorA = parseInt(item.noKa || item.noka || 0);
   const nomorB = parseInt(inputNoKa);
   const nomorSama = nomorA === nomorB;
-  const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
+  const nomorPasangan = (nomorA === nomorB - 1);
   
   return matchHari && (nomorSama || nomorPasangan);
 });
