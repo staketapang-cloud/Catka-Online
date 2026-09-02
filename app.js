@@ -67,19 +67,52 @@ function handleAutoStamformasi(e) {
 
     const currentTanggal = document.getElementById("filterDate").value;
 
-    // Cari data KA di hari yang sama (Nomor KA sama ATAU selisih satu angka / pasangannya)
-    const kadiHariSama = catkaStorage.find(item => {
-        const matchHari = item.tanggal === currentTanggal;
+    // // Cari data KA di hari yang sama (Nomor KA sama ATAU selisih satu angka / pasangannya)
+    // const kadiHariSama = catkaStorage.find(item => {
+    //     const matchHari = item.tanggal === currentTanggal;
         
-        // Amankan konversi nomor KA ke Integer untuk perbandingan matematika
-        const nomorA = parseInt(item.noKa || item.noka || 0);
-        const nomorB = parseInt(inputNoKa);
+    //     // Amankan konversi nomor KA ke Integer untuk perbandingan matematika
+    //     const nomorA = parseInt(item.noKa || item.noka || 0);
+    //     const nomorB = parseInt(inputNoKa);
         
-        const nomorSama = nomorA === nomorB;
-        const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
+    //     const nomorSama = nomorA === nomorB;
+    //     const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
         
-        return matchHari && (nomorSama || nomorPasangan);
-    });
+    //     return matchHari && (nomorSama || nomorPasangan);
+    // });
+
+    // 1. Cari data di hari yang sama terlebih dahulu
+let kadiHariSama = catkaStorage.find(item => {
+  const matchHari = item.tanggal === currentTanggal;
+  const nomorA = parseInt(item.noKa || item.noka || 0);
+  const nomorB = parseInt(inputNoKa);
+  const nomorSama = nomorA === nomorB;
+  const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
+  
+  return matchHari && (nomorSama || nomorPasangan);
+});
+
+// 2. Jika tidak ketemu, cari data di hari sebelumnya
+if (!kadiHariSama) {
+  // Hitung tanggal kemarin (asumsi format tanggal Anda bisa dibandingkan langsung, atau sesuaikan dengan library/fungsi tanggal Anda)
+  const formatKemarin = (tgl) => {
+    const d = new Date(tgl);
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split('T')[0]; // Menghasilkan format YYYY-MM-DD
+  };
+  
+  const tanggalKemarin = formatKemarin(currentTanggal);
+
+  kadiHariSama = catkaStorage.find(item => {
+    const matchHariKemarin = item.tanggal === tanggalKemarin;
+    const nomorA = parseInt(item.noKa || item.noka || 0);
+    const nomorB = parseInt(inputNoKa);
+    const nomorSama = nomorA === nomorB;
+    const nomorPasangan = (nomorA === nomorB + 1) || (nomorA === nomorB - 1);
+    
+    return matchHariKemarin && (nomorSama || nomorPasangan);
+  });
+}
     
     // Jika ditemukan data pembanding di hari yang sama, langsung suntikkan ke Form Input
     if (kadiHariSama) {
